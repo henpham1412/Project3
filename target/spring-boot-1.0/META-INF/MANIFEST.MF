@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Created-By: IntelliJ IDEA
+Built-By: HP
+Build-Jdk: Eclipse Temurin 1.8.0_452
+Implementation-Version: 1.0
+Implementation-Vendor-Id: com.laptrinhjavaweb
+Main-Class: ${start-class}
+
