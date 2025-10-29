@@ -29,6 +29,7 @@ public class BuildingController {
         ModelAndView modelAndView = new ModelAndView("admin/building/list");
         modelAndView.addObject("modelSearch",  buildingSearchRequest); // luu du lieu sau khi tim kiem tren bang search
         // xử lí dữ liệu dưới DB
+
         List<BuildingSearchResponse> list = new ArrayList<>();
         BuildingSearchResponse buildingSearchResponse1 = new BuildingSearchResponse();
         buildingSearchResponse1.setId(2L);

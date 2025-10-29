@@ -32,21 +32,47 @@ public class UserEntity extends BaseEntity {
     @Column(name = "phone", unique = true)
     private String phone;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_role",
-            joinColumns = @JoinColumn(name = "user_id", nullable = false),
-            inverseJoinColumns = @JoinColumn(name = "role_id", nullable = false))
-    private List<RoleEntity> roles = new ArrayList<>();
+//    @ManyToMany(fetch = FetchType.LAZY)
+//    @JoinTable(name = "user_role",
+//            joinColumns = @JoinColumn(name = "user_id", nullable = false),
+//            inverseJoinColumns = @JoinColumn(name = "role_id", nullable = false))
+//    private List<RoleEntity> roles = new ArrayList<>();
+    @OneToMany(mappedBy = "users", fetch = FetchType.LAZY)
+    private List<UserRoleEntity> userRoleEntities = new ArrayList<>();
 
+    public List<UserRoleEntity> getUserRoleEntities() {
+        return userRoleEntities;
+    }
 
-//    @OneToMany(mappedBy="staffs", fetch = FetchType.LAZY)
+    public void setUserRoleEntities(List<UserRoleEntity> userRoleEntities) {
+        this.userRoleEntities = userRoleEntities;
+    }
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userEntity")
+    private List<AssignBuildingEntity> assignBuildingEntities = new ArrayList<>();
+
+    public List<BuildingEntity> getBuildingEntityList() {
+        List<BuildingEntity> buildingEntityList = new ArrayList<>();
+        for (AssignBuildingEntity assignBuildingEntity : assignBuildingEntities) {
+            buildingEntityList.add(assignBuildingEntity.getBuildingEntity());
+        }
+        return buildingEntityList;
+    }
+
+    public void setBuildingEntityList(List<BuildingEntity> buildingEntityList) {
+        int i = 0;
+        for (AssignBuildingEntity assignBuildingEntity : assignBuildingEntities) {
+            assignBuildingEntity.setBuildingEntity(buildingEntityList.get(i));
+            i += 1;
+        }
+    }
+
+    //    @OneToMany(mappedBy="staffs", fetch = FetchType.LAZY)
 //    private List<AssignmentBuildingEntity> assignmentBuildingEntities = new ArrayList<>();
 //
 //    @OneToMany(mappedBy="users", fetch = FetchType.LAZY)
 //    private List<UserRoleEntity> userRoleEntities = new ArrayList<>();
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "userEntities")
-    List<BuildingEntity> buildingEntityList = new ArrayList<>();
-
+//    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "userEntities")
+//    List<BuildingEntity> buildingEntityList = new ArrayList<>();
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }
@@ -85,11 +111,19 @@ public class UserEntity extends BaseEntity {
     }
 
     public List<RoleEntity> getRoles() {
+        List<RoleEntity> roles = new ArrayList<>();
+        for (UserRoleEntity userRoleEntity : userRoleEntities) {
+            roles.add(userRoleEntity.getRoles());
+        }
         return roles;
     }
 
     public void setRoles(List<RoleEntity> roles) {
-        this.roles = roles;
+        int i = 0;
+        for (UserRoleEntity userRoleEntity : userRoleEntities) {
+            userRoleEntity.setRoles(roles.get(i));
+            i += 1;
+        }
     }
 
     public String getEmail() {

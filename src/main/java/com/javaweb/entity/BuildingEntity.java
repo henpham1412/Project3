@@ -97,33 +97,49 @@ public class BuildingEntity extends BaseEntity{
 //    @Column(name = "image")
 //    private String image;
 
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "buildingEntity")
-//    List<RentAreaEntity> rentAreaEntities = new ArrayList<>();
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "buildingEntity")
-//    List<AssignBuildingEntity> assignBuildingEntities = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "buildingList")
+    List<RentAreaEntity> rentAreaEntities = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "buildingEntity")
+    List<AssignBuildingEntity> assignBuildingEntities = new ArrayList<>();
 
-    @ManyToMany(fetch =  FetchType.LAZY)
-    @JoinTable(name = "assignmentbuilding",
-            joinColumns = @JoinColumn(name = "buildingid", nullable = false),
-            inverseJoinColumns = @JoinColumn(name = "staffid", nullable = false)
-    )
-    private List<UserEntity> userEntities = new ArrayList<>();
+//    @ManyToMany(fetch =  FetchType.LAZY)
+//    @JoinTable(name = "assignmentbuilding",
+//            joinColumns = @JoinColumn(name = "buildingid", nullable = false),
+//            inverseJoinColumns = @JoinColumn(name = "staffid", nullable = false)
+//    )
+//    private List<UserEntity> userEntities = new ArrayList<>();
 
-//    public List<AssignBuildingEntity> getAssignBuildingEntities() {
-//        return assignBuildingEntities;
-//    }
-//
-//    public void setAssignBuildingEntities(List<AssignBuildingEntity> assignBuildingEntities) {
-//        this.assignBuildingEntities = assignBuildingEntities;
-//    }
+    public List<AssignBuildingEntity> getAssignBuildingEntities() {
+        return assignBuildingEntities;
+    }
+
+    public void setAssignBuildingEntities(List<AssignBuildingEntity> assignBuildingEntities) {
+        this.assignBuildingEntities = assignBuildingEntities;
+    }
 
 
     public List<UserEntity> getUserEntities() {
+        List<UserEntity> userEntities = new ArrayList<>();
+        for (AssignBuildingEntity assignBuildingEntity : assignBuildingEntities) {
+            userEntities.add(assignBuildingEntity.getUserEntity());
+        }
         return userEntities;
     }
 
     public void setUserEntities(List<UserEntity> userEntities) {
-        this.userEntities = userEntities;
+        int i = 0;
+        for (AssignBuildingEntity assignBuildingEntity : assignBuildingEntities) {
+            assignBuildingEntity.setUserEntity(userEntities.get(i));
+            i += 1;
+        }
+    }
+
+    public List<RentAreaEntity> getRentAreaEntities() {
+        return rentAreaEntities;
+    }
+
+    public void setRentAreaEntities(List<RentAreaEntity> rentAreaEntities) {
+        this.rentAreaEntities = rentAreaEntities;
     }
 
     public String getName() {

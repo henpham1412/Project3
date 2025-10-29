@@ -10,7 +10,6 @@ import com.javaweb.service.IBuildingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.xml.ws.Action;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +25,7 @@ public class BuildingService implements IBuildingService {
     @Override
     public ResponseDTO listStaffs(Long buildingId) {
         BuildingEntity building = buildingRepository.findById(buildingId).get();
-        List<UserEntity> staffs = userRepository.findByStatusAndRoles_Code(1, "STAFF");
+        List<UserEntity> staffs = userRepository.findByStatusAndUserRoleEntitiesRolesCode(1, "STAFF");
         List<UserEntity> staffAssignment = building.getUserEntities();
         List<StaffResponseDTO> staffResponseDTOList = new ArrayList<>();
         ResponseDTO responseDTO = new ResponseDTO();
