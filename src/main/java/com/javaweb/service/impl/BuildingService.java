@@ -1,7 +1,10 @@
 package com.javaweb.service.impl;
 
+import com.javaweb.converter.BuildingConverter;
 import com.javaweb.entity.BuildingEntity;
 import com.javaweb.entity.UserEntity;
+import com.javaweb.model.request.BuildingSearchRequest;
+import com.javaweb.model.response.BuildingSearchResponse;
 import com.javaweb.model.response.ResponseDTO;
 import com.javaweb.model.response.StaffResponseDTO;
 import com.javaweb.repository.BuildingRepository;
@@ -11,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -21,6 +25,9 @@ public class BuildingService implements IBuildingService {
 
     @Autowired
     private UserRepository  userRepository;
+
+    @Autowired
+    private BuildingConverter buildingConverter;
 
     @Override
     public ResponseDTO listStaffs(Long buildingId) {
@@ -43,5 +50,16 @@ public class BuildingService implements IBuildingService {
         responseDTO.setData(staffResponseDTOList);
         responseDTO.setMessage("success");
         return responseDTO;
+    }
+
+    @Override
+    public List<BuildingSearchResponse> listBuildings(BuildingSearchRequest buildingSearchRequest) {
+        List<BuildingEntity> buildingEntities = buildingRepository.getBuildingEntities(buildingSearchRequest);
+        List<BuildingSearchResponse> buildingSearchResponseList = new ArrayList<>();
+        for (BuildingEntity buildingEntity : buildingEntities) {
+            BuildingSearchResponse buildingSearchResponse = buildingConverter.convert(buildingEntity);
+            buildingSearchResponseList.add(buildingSearchResponse);
+        }
+        return buildingSearchResponseList;
     }
 }
