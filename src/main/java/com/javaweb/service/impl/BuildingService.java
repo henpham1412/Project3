@@ -2,15 +2,19 @@ package com.javaweb.service.impl;
 
 import com.javaweb.converter.BuildingConverter;
 import com.javaweb.entity.BuildingEntity;
+import com.javaweb.entity.RentAreaEntity;
 import com.javaweb.entity.UserEntity;
+import com.javaweb.model.dto.AssignmentBuildingDTO;
 import com.javaweb.model.dto.BuildingDTO;
 import com.javaweb.model.request.BuildingSearchRequest;
 import com.javaweb.model.response.BuildingSearchResponse;
 import com.javaweb.model.response.ResponseDTO;
 import com.javaweb.model.response.StaffResponseDTO;
 import com.javaweb.repository.BuildingRepository;
+import com.javaweb.repository.RentAreaRepository;
 import com.javaweb.repository.UserRepository;
 import com.javaweb.service.IBuildingService;
+import com.javaweb.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +33,9 @@ public class BuildingService implements IBuildingService {
 
     @Autowired
     private BuildingConverter buildingConverter;
+
+    @Autowired
+    private RentAreaRepository rentAreaRepository;
 
     @Override
     public ResponseDTO listStaffs(Long buildingId) {
@@ -69,11 +76,35 @@ public class BuildingService implements IBuildingService {
     public void addBuilding(BuildingDTO buildingDTO) {
         BuildingEntity buildingEntity = buildingConverter.convertDTOToEntity(buildingDTO);
         buildingRepository.save(buildingEntity);
+        String rentAreaStr = buildingDTO.getRentArea();
+        if (StringUtils.check(rentAreaStr)) {
+            List<RentAreaEntity> rentAreaEntities = new ArrayList<>();
+            String[] areas = rentAreaStr.split(",");
+            for (String areaValue : areas) {
+                RentAreaEntity rentAreaEntity = new RentAreaEntity();
+                rentAreaEntity.setValue(Long.parseLong(areaValue.trim()));
+                rentAreaEntity.setBuildingList(buildingEntity);
+                rentAreaEntities.add(rentAreaEntity);
+            }
+            rentAreaRepository.saveAll(rentAreaEntities);
+        }
     }
 
     @Transactional
     @Override
     public void deleteBuilding(List<Long> ids) {
         buildingRepository.deleteByIdIn(ids);
+    }
+
+    @Override
+    public BuildingDTO findBuilding(Long id) {
+        BuildingEntity buildingEntity = buildingRepository.findById(id).get();
+        BuildingDTO buildingDTO = buildingConverter.convertEntityToDTO(buildingEntity);
+        return buildingDTO;
+    }
+
+    @Override
+    public void assignBuilding(AssignmentBuildingDTO assignmentBuildingDTO) {
+
     }
 }

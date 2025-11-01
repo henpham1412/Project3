@@ -55,9 +55,7 @@ public class BuildingController {
     public ModelAndView buildingEdit(@PathVariable("id") Long id, HttpServletRequest request) {
         ModelAndView modelAndView = new ModelAndView("admin/building/edit");
         // find building by id in DB
-        BuildingDTO buildingDTO = new BuildingDTO();
-        buildingDTO.setId(id);
-        buildingDTO.setName("KTX Khu A");
+        BuildingDTO buildingDTO = buildingService.findBuilding(id);
         modelAndView.addObject("buildingEdit", buildingDTO);
         modelAndView.addObject("districts", District.type());
         modelAndView.addObject("typeCodes", TypeCode.type());

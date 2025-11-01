@@ -5,10 +5,12 @@ import com.javaweb.entity.RentAreaEntity;
 import com.javaweb.enums.District;
 import com.javaweb.model.dto.BuildingDTO;
 import com.javaweb.model.response.BuildingSearchResponse;
+import com.javaweb.utils.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +30,23 @@ public class BuildingConverter {
     }
     public BuildingDTO convertEntityToDTO(BuildingEntity  buildingEntity) {
         BuildingDTO buildingDTO = modelMapper.map(buildingEntity, BuildingDTO.class);
+        List<RentAreaEntity>  rentAreas = buildingEntity.getRentAreaEntities();
+        String rentAreaStr = rentAreas.stream().
+                map(it -> it.getValue().toString()).collect(Collectors.joining(", "));
+        buildingDTO.setRentArea(rentAreaStr);
+
+        String typeCodes = buildingEntity.getTypeCode();
+        if (StringUtils.check(typeCodes)) {
+            if (typeCodes.charAt(0) == '[') {
+                typeCodes = typeCodes.substring(1, typeCodes.length() - 1);
+            }
+            String[] typeCodesArr = typeCodes.split(",");
+            List<String> codes = new ArrayList<>();
+            for (String typeCode : typeCodesArr) {
+                codes.add(typeCode.trim());
+            }
+            buildingDTO.setTypeCode(codes);
+        }
         return buildingDTO;
     }
 
