@@ -1,0 +1,8 @@
+# Cấu hình IDE (IntelliJ)
+.idea/
+
+# Thư mục build của Maven/Spring Boot
+target/
+
+# Thư mục database (nếu có)
+database/

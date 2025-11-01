@@ -11,11 +11,20 @@ public enum TypeCode {
     TypeCode(String name) {
         this.name = name;
     }
-    public static Map<String, String> type(){
-        Map<String, String> typeCodes = new HashMap<>();
-        for (TypeCode typeCode : TypeCode.values()){
-            typeCodes.put(typeCode.toString(), typeCode.name);
+//    public static Map<String, String> type(){
+//        Map<String, String> typeCodes = new HashMap<>();
+//        for (TypeCode typeCode : TypeCode.values()){
+//            typeCodes.put(typeCode.toString(), typeCode.name);
+//        }
+//        return typeCodes;
+//    }
+    private static Map<String, String> typeCodeMap = new HashMap<>();
+    static {
+        for (TypeCode typeCode : TypeCode.values()) {
+            typeCodeMap.put(typeCode.name(), typeCode.name);
         }
-        return typeCodes;
+    }
+    public static Map<String, String> type() {
+        return typeCodeMap;
     }
 }

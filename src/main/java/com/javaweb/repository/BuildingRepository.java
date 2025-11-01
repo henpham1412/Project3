@@ -10,4 +10,5 @@ import java.util.List;
 
 public interface BuildingRepository extends JpaRepository<BuildingEntity,Long>, BuildingRepositoryCustom {
     List<BuildingEntity> getBuildingEntities(BuildingSearchRequest buildingSearchRequest);
+    void deleteByIdIn(List<Long> ids);
 }

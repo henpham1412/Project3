@@ -3,6 +3,7 @@ package com.javaweb.service.impl;
 import com.javaweb.converter.BuildingConverter;
 import com.javaweb.entity.BuildingEntity;
 import com.javaweb.entity.UserEntity;
+import com.javaweb.model.dto.BuildingDTO;
 import com.javaweb.model.request.BuildingSearchRequest;
 import com.javaweb.model.response.BuildingSearchResponse;
 import com.javaweb.model.response.ResponseDTO;
@@ -12,9 +13,9 @@ import com.javaweb.repository.UserRepository;
 import com.javaweb.service.IBuildingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -57,9 +58,22 @@ public class BuildingService implements IBuildingService {
         List<BuildingEntity> buildingEntities = buildingRepository.getBuildingEntities(buildingSearchRequest);
         List<BuildingSearchResponse> buildingSearchResponseList = new ArrayList<>();
         for (BuildingEntity buildingEntity : buildingEntities) {
-            BuildingSearchResponse buildingSearchResponse = buildingConverter.convert(buildingEntity);
+            BuildingSearchResponse buildingSearchResponse = buildingConverter.convertEntityToResponse(buildingEntity);
             buildingSearchResponseList.add(buildingSearchResponse);
         }
         return buildingSearchResponseList;
+    }
+
+    @Transactional
+    @Override
+    public void addBuilding(BuildingDTO buildingDTO) {
+        BuildingEntity buildingEntity = buildingConverter.convertDTOToEntity(buildingDTO);
+        buildingRepository.save(buildingEntity);
+    }
+
+    @Transactional
+    @Override
+    public void deleteBuilding(List<Long> ids) {
+        buildingRepository.deleteByIdIn(ids);
     }
 }
