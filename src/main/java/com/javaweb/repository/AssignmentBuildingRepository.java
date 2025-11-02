@@ -1,7 +1,10 @@
 package com.javaweb.repository;
 
-import com.javaweb.entity.AssignBuildingEntity;
+import com.javaweb.entity.AssignmentBuildingEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AssignmentBuildingRepository extends JpaRepository<AssignBuildingEntity,Long> {
+import java.util.List;
+
+public interface AssignmentBuildingRepository extends JpaRepository<AssignmentBuildingEntity,Long> {
+    List<AssignmentBuildingEntity> findAllByBuildingEntity_Id(Long buildingId);
 }

@@ -10,6 +10,10 @@
 <%@include file="/common/taglib.jsp" %>
 <c:url var="buildingListURL" value="/admin/building-list"/>
 <c:url var="buildingAPI" value="/api/building"/>
+<script>
+    var buildingListUrl = "${pageContext.request.contextPath}/admin/building-list";
+</script>
+
 <html>
 <head>
     <title>Danh sách tòa nhà</title>
@@ -378,7 +382,7 @@
             },
             error: function(response) {
                 console.log("failed");
-                window.location.href = "<c:url value="/admin/building-list?message=error"/>";
+                window.location.href = buildingListUrl + "?message=error";
                 console.log(response);
             }
         });

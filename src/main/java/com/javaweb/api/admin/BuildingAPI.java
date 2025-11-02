@@ -6,8 +6,10 @@ import com.javaweb.model.response.ResponseDTO;
 import com.javaweb.service.IBuildingService;
 import com.javaweb.service.impl.BuildingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController(value = "buildingAPIOfAdmin")
@@ -37,7 +39,8 @@ public class BuildingAPI {
     }
 
     @PostMapping("/assignment")
-    public void updateAssignmentBuilding(@RequestBody AssignmentBuildingDTO  assignmentBuildingDTO) {
-        System.out.println("ok");
+    public ResponseEntity<?> updateAssignmentBuilding(@RequestBody AssignmentBuildingDTO  assignmentBuildingDTO) {
+        buildingService.assignBuilding(assignmentBuildingDTO);
+        return ResponseEntity.ok(Collections.singletonMap("status", "success"));
     }
 }

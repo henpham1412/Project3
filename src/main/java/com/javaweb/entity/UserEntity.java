@@ -48,20 +48,20 @@ public class UserEntity extends BaseEntity {
         this.userRoleEntities = userRoleEntities;
     }
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "userEntity")
-    private List<AssignBuildingEntity> assignBuildingEntities = new ArrayList<>();
+    private List<AssignmentBuildingEntity> assignBuildingEntities = new ArrayList<>();
 
     public List<BuildingEntity> getBuildingEntityList() {
         List<BuildingEntity> buildingEntityList = new ArrayList<>();
-        for (AssignBuildingEntity assignBuildingEntity : assignBuildingEntities) {
-            buildingEntityList.add(assignBuildingEntity.getBuildingEntity());
+        for (AssignmentBuildingEntity assignmentBuildingEntity : assignBuildingEntities) {
+            buildingEntityList.add(assignmentBuildingEntity.getBuildingEntity());
         }
         return buildingEntityList;
     }
 
     public void setBuildingEntityList(List<BuildingEntity> buildingEntityList) {
         int i = 0;
-        for (AssignBuildingEntity assignBuildingEntity : assignBuildingEntities) {
-            assignBuildingEntity.setBuildingEntity(buildingEntityList.get(i));
+        for (AssignmentBuildingEntity assignmentBuildingEntity : assignBuildingEntities) {
+            assignmentBuildingEntity.setBuildingEntity(buildingEntityList.get(i));
             i += 1;
         }
     }

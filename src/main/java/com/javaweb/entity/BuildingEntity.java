@@ -100,7 +100,7 @@ public class BuildingEntity extends BaseEntity{
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "buildingList")
     List<RentAreaEntity> rentAreaEntities = new ArrayList<>();
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "buildingEntity")
-    List<AssignBuildingEntity> assignBuildingEntities = new ArrayList<>();
+    List<AssignmentBuildingEntity> assignBuildingEntities = new ArrayList<>();
 
 //    @ManyToMany(fetch =  FetchType.LAZY)
 //    @JoinTable(name = "assignmentbuilding",
@@ -109,27 +109,27 @@ public class BuildingEntity extends BaseEntity{
 //    )
 //    private List<UserEntity> userEntities = new ArrayList<>();
 
-    public List<AssignBuildingEntity> getAssignBuildingEntities() {
+    public List<AssignmentBuildingEntity> getAssignBuildingEntities() {
         return assignBuildingEntities;
     }
 
-    public void setAssignBuildingEntities(List<AssignBuildingEntity> assignBuildingEntities) {
+    public void setAssignBuildingEntities(List<AssignmentBuildingEntity> assignBuildingEntities) {
         this.assignBuildingEntities = assignBuildingEntities;
     }
 
 
     public List<UserEntity> getUserEntities() {
         List<UserEntity> userEntities = new ArrayList<>();
-        for (AssignBuildingEntity assignBuildingEntity : assignBuildingEntities) {
-            userEntities.add(assignBuildingEntity.getUserEntity());
+        for (AssignmentBuildingEntity assignmentBuildingEntity : assignBuildingEntities) {
+            userEntities.add(assignmentBuildingEntity.getUserEntity());
         }
         return userEntities;
     }
 
     public void setUserEntities(List<UserEntity> userEntities) {
         int i = 0;
-        for (AssignBuildingEntity assignBuildingEntity : assignBuildingEntities) {
-            assignBuildingEntity.setUserEntity(userEntities.get(i));
+        for (AssignmentBuildingEntity assignmentBuildingEntity : assignBuildingEntities) {
+            assignmentBuildingEntity.setUserEntity(userEntities.get(i));
             i += 1;
         }
     }
