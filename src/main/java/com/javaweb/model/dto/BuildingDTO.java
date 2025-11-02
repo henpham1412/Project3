@@ -80,10 +80,7 @@ public class BuildingDTO extends AbstractDTO{
     }
 
     public String getImageBase64() {
-        if (imageBase64 != null) {
-            return imageBase64.split(",")[1];
-        }
-        return null;
+        return imageBase64;
     }
 
     public void setImageBase64(String imageBase64) {

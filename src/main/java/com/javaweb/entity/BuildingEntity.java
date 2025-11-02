@@ -79,23 +79,20 @@ public class BuildingEntity extends BaseEntity{
     @Column(name = "note")
     private String note;
 
-//    @Column(name = "linkofbuilding")
-//    private String linkOfBuilding;
-//
-//    @Column(name = "map")
-//    private String map;
-//
-//    @Column(name = "avatar")
-//    private String avatar;
+    @Column(name = "linkofbuilding")
+    private String linkOfBuilding;
+
+    @Column(name = "map")
+    private String map;
+
+    @Column(name = "avatar")
+    private String avatar;
 
     @Column(name = "managername")
     private String managerName;
 
     @Column(name = "managerphone")
     private String managerPhone;
-
-//    @Column(name = "image")
-//    private String image;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "buildingList")
     List<RentAreaEntity> rentAreaEntities = new ArrayList<>();
@@ -350,4 +347,27 @@ public class BuildingEntity extends BaseEntity{
         this.managerPhone = managerPhone;
     }
 
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public String getLinkOfBuilding() {
+        return linkOfBuilding;
+    }
+
+    public void setLinkOfBuilding(String linkOfBuilding) {
+        this.linkOfBuilding = linkOfBuilding;
+    }
+
+    public String getMap() {
+        return map;
+    }
+
+    public void setMap(String map) {
+        this.map = map;
+    }
 }

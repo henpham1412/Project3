@@ -4,6 +4,9 @@ import com.javaweb.entity.BuildingEntity;
 import com.javaweb.model.request.BuildingSearchRequest;
 import com.javaweb.repository.custom.BuildingRepositoryCustom;
 import com.javaweb.utils.StringUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import org.hibernate.query.Query;
@@ -50,7 +53,7 @@ public class BuildingRepositoryImpl implements BuildingRepositoryCustom {
     }
 
     @Override
-    public List<BuildingEntity> getBuildingEntities(BuildingSearchRequest buildingSearchRequest) {
+    public Page<BuildingEntity> getBuildingEntities(BuildingSearchRequest buildingSearchRequest, Pageable pageable) {
         StringBuilder queryBuilder = new StringBuilder("SELECT b.* FROM building b ");
         StringBuilder whereClause = new StringBuilder(" WHERE 1 = 1 ");
 
@@ -83,11 +86,24 @@ public class BuildingRepositoryImpl implements BuildingRepositoryCustom {
         if (buildingSearchRequest.getTypeCode() != null &&  !buildingSearchRequest.getTypeCode().isEmpty()) {
             inCondition(buildingSearchRequest.getTypeCode(), "b.type", whereClause);
         }
-        whereClause.append(" group by b.id ");
+
+        String countsql = "SELECT COUNT(DISTINCT b.id) FROM building b " +
+                queryBuilder.toString().replace(" SELECT b.* FROM building b ", "") + // Lấy các JOIN
+                whereClause.toString(); // Lấy các WHERE
+
+        Query countQuery = (Query) entityManager.createNativeQuery(countsql);
+
+        long total = ((Number) countQuery.getSingleResult()).longValue();
+
+        whereClause.append(" GROUP BY b.id ");
+
+        whereClause.append(" LIMIT " + pageable.getPageSize() +
+                " OFFSET " + pageable.getOffset());
+
         queryBuilder.append(whereClause.toString());
 
         Query query = (Query) entityManager.createNativeQuery(queryBuilder.toString(), BuildingEntity.class);
         List<BuildingEntity> result = query.getResultList();
-        return result;
+        return new PageImpl<>(result, pageable, total);
     }
 }

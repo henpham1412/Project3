@@ -276,12 +276,26 @@
                                            style="display: inline-block; width: 80px; height: 28px; border-radius: 3px; background: #007bff; color: #fff; text-align: center; line-height: 28px; font-size: 11px; font-weight: 600; cursor: pointer; margin-bottom: 5px;">
                                         Chọn tệp
                                     </label>
-                                    <span id="file-name">Không có tệp nào được chọn</span>
+                                    <span id="file-name">
+
+                                        <c:choose>
+                                            <c:when test="${not empty buildingEdit.imageName}">
+                                                ${buildingEdit.imageName} </c:when>
+                                            <c:otherwise>
+                                                Không có tệp nào được chọn
+                                            </c:otherwise>
+                                        </c:choose>
+
+                                    </span>
 
                                     <!-- khung hiển thị ảnh -->
                                     <div style="margin-top:10px;">
-                                        <img id="preview" src="" alt="Preview"
-                                             style="max-width:200px; max-height:200px; border:1px solid #ccc; display:none;">
+                                        <img id="preview"
+                                         src="${not empty buildingEdit.imageBase64 ? buildingEdit.imageBase64 : ''}"
+                                         alt="Preview"
+                                         style="max-width:200px; max-height:200px; border:1px solid #ccc;
+                                                display:${not empty buildingEdit.imageBase64 ? 'block' : 'none'};">
+
                                     </div>
                                 </div>
                             </div>
@@ -298,12 +312,14 @@
                                         reader.onload = function(e) {
                                             preview.src = e.target.result;
                                             preview.style.display = "block";
+                                            avatarBase64 = e.target.result;
                                         }
                                         reader.readAsDataURL(input.files[0]);
                                     } else {
                                         fileNameSpan.textContent = "Không có tệp nào được chọn";
                                         preview.src = "";
                                         preview.style.display = "none";
+                                        avatarBase64 = null;
                                     }
                                 }
                             </script>
@@ -332,6 +348,7 @@
     </div><!-- /.main-content -->
 </div><!-- /.main-container -->
 <script>
+    var avatarBase64 = null;
     $('#btnAddOrUpdateBuilding').click(function(){
         var data = {};
         var typeCode = [];
@@ -345,6 +362,11 @@
             }
         });
         data['typeCode'] = typeCode;
+
+        if (avatarBase64) {
+            data['imageBase64'] = avatarBase64;
+        }
+
         if (typeCode != "") {
             addOrUpdateBuilding(data);
         } else {
