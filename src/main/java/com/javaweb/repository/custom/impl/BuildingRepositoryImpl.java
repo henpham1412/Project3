@@ -87,11 +87,13 @@ public class BuildingRepositoryImpl implements BuildingRepositoryCustom {
             inCondition(buildingSearchRequest.getTypeCode(), "b.type", whereClause);
         }
 
-        String countsql = "SELECT COUNT(DISTINCT b.id) FROM building b " +
-                queryBuilder.toString().replace(" SELECT b.* FROM building b ", "") + // Lấy các JOIN
-                whereClause.toString(); // Lấy các WHERE
+        String joins = queryBuilder.toString().replace("SELECT b.* FROM building b ", "");
+        String countSql = "SELECT COUNT(DISTINCT b.id) FROM building b " +
+                joins +
+                whereClause.toString();
 
-        Query countQuery = (Query) entityManager.createNativeQuery(countsql);
+
+        Query countQuery = (Query) entityManager.createNativeQuery(countSql);
 
         long total = ((Number) countQuery.getSingleResult()).longValue();
 

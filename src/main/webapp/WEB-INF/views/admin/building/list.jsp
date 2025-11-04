@@ -66,18 +66,18 @@
 
                             <div class="widget-body" style="font-family: 'Times New Roman', Times, serif;">
                                 <div class="widget-main">
-                                    <form:form id="listForm" modelAttribute="modelSearch" action="${buildingListURL}" method="GET">
+                                    <form:form id="listForm" modelAttribute="buildingSearch" action="${buildingListURL}" method="GET">
                                          <div class = "row">
                                         <div class="from-group">
                                             <div class="col-xs-12">
                                                 <div class="col-xs-6">
                                                     <label class="name">Tên tòa nhà</label>
-<%--                                                    <input type="text" class="form-control" name="name" value="${modelSearch.name}">--%>
+<%--                                                    <input type="text" class="form-control" name="name" value="${buildingSearch.name}">--%>
                                                         <form:input path="name" class="form-control" />
                                                 </div>
                                                 <div class="col-xs-6">
                                                     <label class="name">Diện tích sàn</label>
-<%--                                                    <input type="number" class="form-control" name="floorArea" value="${modelSearch.floorArea}">--%>
+<%--                                                    <input type="number" class="form-control" name="floorArea" value="${buildingSearch.floorArea}">--%>
                                                         <form:input path="floorArea" class="form-control" />
                                                 </div>
                                             </div>
@@ -92,29 +92,29 @@
                                                 <div class="col-xs-5">
                                                     <label class="name">Phường</label>
                                                     <form:input path="ward" class="form-control" />
-<%--                                                    <input type="text" class="form-control" name="ward" value="${modelSearch.ward}">--%>
+<%--                                                    <input type="text" class="form-control" name="ward" value="${buildingSearch.ward}">--%>
                                                 </div>
                                                 <div class="col-xs-5">
                                                     <label class="name">Đường</label>
                                                     <form:input path="street" class="form-control" />
-<%--                                                    <input type="text" class="form-control" name="street" value="${modelSearch.street}">--%>
+<%--                                                    <input type="text" class="form-control" name="street" value="${buildingSearch.street}">--%>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12">
                                                 <div class="col-xs-4">
                                                     <label class="name">Số tầng hầm</label>
                                                     <form:input path="numberOfBasement" class="form-control" />
-<%--                                                    <input type="text" class="form-control" name="numberOfBasement" value="${modelSearch.numberOfBasement}">--%>
+<%--                                                    <input type="text" class="form-control" name="numberOfBasement" value="${buildingSearch.numberOfBasement}">--%>
                                                 </div>
                                                 <div class="col-xs-4">
                                                     <label class="name">Hướng</label>
                                                     <form:input path="direction" class="form-control" />
-<%--                                                    <input type="text" class="form-control" name="direction" value="${modelSearch.direction}">--%>
+<%--                                                    <input type="text" class="form-control" name="direction" value="${buildingSearch.direction}">--%>
                                                 </div>
                                                 <div class="col-xs-4">
                                                     <label class="name">Hạng</label>
                                                     <form:input path="level" class="form-control" />
-<%--                                                    <input type="number" class="form-control" name="level" value="${modelSearch.level}">--%>
+<%--                                                    <input type="number" class="form-control" name="level" value="${buildingSearch.level}">--%>
                                                 </div>
                                             </div>
                                             <div class="col-xs-12">
@@ -229,7 +229,7 @@
                             </thead>
 
                             <tbody>
-                            <c:forEach var="item" items="${buildingList}">
+                            <c:forEach var="item" items="${buildingPage.content}">
                                 <tr>
                                 <td class="center">
                                     <label class="pos-rel">
@@ -270,6 +270,93 @@
                         </table>
                     </div><!-- /.span -->
                 </div>
+                <c:if test="${buildingPage.totalPages > 0}">
+                <ul class="pagination">
+                    <%-- Nút Lùi (Previous) --%>
+                    <c:choose>
+                        <c:when test="${buildingPage.first}">
+                            <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                        </c:when>
+                        <c:otherwise>
+                            <c:url var="prevPageUrl" value="/admin/building-list">
+                                <c:param name="page" value="${buildingPage.number - 1}"/>
+                                <c:param name="size" value="${buildingPage.size}"/>
+                                <c:param name="tenQuanLi" value="${buildingSearch.managerName}"/>
+                                <c:param name="sdtQuanLi" value="${buildingSearch.managerPhone}"/>
+                                <c:param name="nhanVien" value="${buildingSearch.staffId}"/>
+                                <%-- Thêm các param filter khác nếu có --%>
+                            </c:url>
+                            <li class="page-item"><a class="page-link" href="${prevPageUrl}">Previous</a></li>
+                        </c:otherwise>
+                    </c:choose>
+
+                    <%-- Các nút số trang --%>
+                    <c:forEach var="i" begin="0" end="${buildingPage.totalPages - 1}">
+                        <c:url var="pageUrl" value="/admin/building-list">
+                            <c:param name="page" value="${i}"/>
+                            <c:param name="size" value="${buildingPage.size}"/>
+                            <c:param name="name" value="${buildingSearch.name}"/>
+                            <c:param name="floorArea" value="${buildingSearch.floorArea}"/>
+                            <c:param name="district" value="${buildingSearch.district}"/>
+                            <c:param name="ward" value="${buildingSearch.ward}"/>
+                            <c:param name="street" value="${buildingSearch.street}"/>
+                            <c:param name="numberOfBasement" value="${buildingSearch.numberOfBasement}"/>
+                            <c:param name="direction" value="${buildingSearch.direction}"/>
+                            <c:param name="level" value="${buildingSearch.level}"/>
+                            <c:param name="areaFrom" value="${buildingSearch.areaFrom}"/>
+                            <c:param name="areaTo" value="${buildingSearch.areaTo}"/>
+                            <c:param name="rentPriceFrom" value="${buildingSearch.rentPriceFrom}"/>
+                            <c:param name="rentPriceTo" value="${buildingSearch.rentPriceTo}"/>
+                            <c:param name="managerName" value="${buildingSearch.managerName}"/>
+                            <c:param name="managerPhone" value="${buildingSearch.managerPhone}"/>
+                            <c:param name="staffId" value="${buildingSearch.staffId}"/>
+                            <c:param name="typeCode" value="${buildingSearch.typeCode}"/>
+                             <%-- Thêm các param filter khác nếu có --%>
+                        </c:url>
+
+                        <c:choose>
+                            <c:when test="${i == buildingPage.number}">
+                                <li class="page-item active"><a class="page-link" href="${pageUrl}">${i + 1}</a></li>
+                            </c:when>
+                            <c:otherwise>
+                                <li class="page-item"><a class="page-link" href="${pageUrl}">${i + 1}</a></li>
+                            </c:otherwise>
+                        </c:choose>
+                    </c:forEach>
+
+                    <%-- Nút Tới (Next) --%>
+                    <c:choose>
+                        <c:when test="${buildingPage.last}">
+                            <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+                        </c:when>
+                        <c:otherwise>
+                            <c:url var="nextPageUrl" value="/admin/building-list">
+                                <c:param name="page" value="${buildingPage.number + 1}"/>
+                                <c:param name="size" value="${buildingPage.size}"/>
+                                <c:param name="name" value="${buildingSearch.name}"/>
+                                <c:param name="floorArea" value="${buildingSearch.floorArea}"/>
+                                <c:param name="district" value="${buildingSearch.district}"/>
+                                <c:param name="ward" value="${buildingSearch.ward}"/>
+                                <c:param name="street" value="${buildingSearch.street}"/>
+                                <c:param name="numberOfBasement" value="${buildingSearch.numberOfBasement}"/>
+                                <c:param name="direction" value="${buildingSearch.direction}"/>
+                                <c:param name="level" value="${buildingSearch.level}"/>
+                                <c:param name="areaFrom" value="${buildingSearch.areaFrom}"/>
+                                <c:param name="areaTo" value="${buildingSearch.areaTo}"/>
+                                <c:param name="rentPriceFrom" value="${buildingSearch.rentPriceFrom}"/>
+                                <c:param name="rentPriceTo" value="${buildingSearch.rentPriceTo}"/>
+                                <c:param name="managerName" value="${buildingSearch.managerName}"/>
+                                <c:param name="managerPhone" value="${buildingSearch.managerPhone}"/>
+                                <c:param name="staffId" value="${buildingSearch.staffId}"/>
+                                <c:param name="typeCode" value="${buildingSearch.typeCode}"/>
+                                 <%-- Thêm các param filter khác nếu có --%>
+                            </c:url>
+                            <li class="page-item"><a class="page-link" href="${nextPageUrl}">Next</a></li>
+                        </c:otherwise>
+                    </c:choose>
+                </ul>
+            </c:if>
+
             </div><!-- /.page-content -->
         </div>
 </div><!-- /.main-container -->

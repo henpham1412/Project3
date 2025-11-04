@@ -18,12 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller(value="buildingControllerOfAdmin")
 public class BuildingController {
@@ -34,14 +31,14 @@ public class BuildingController {
     @Autowired
     private UserService userService;
     @RequestMapping(value="/admin/building-list", method = RequestMethod.GET)
-    public ModelAndView buildingList(@ModelAttribute BuildingSearchRequest buildingSearchRequest,
+    public ModelAndView buildingList(@ModelAttribute("buildingSearch") BuildingSearchRequest buildingSearchRequest,
                                      HttpServletRequest request, @PageableDefault(page = 0, size = 5) Pageable pageable) {
         ModelAndView modelAndView = new ModelAndView("admin/building/list");
         // xử lí dữ liệu dưới DB
-        Page<BuildingSearchResponse> list = buildingService.listBuildings(buildingSearchRequest, pageable);
+        Page<BuildingSearchResponse> buildingPage = buildingService.listBuildings(buildingSearchRequest, pageable);
 
-        modelAndView.addObject("buildingList", list);
-        modelAndView.addObject("modelSearch",  buildingSearchRequest); // luu du lieu sau khi tim kiem tren bang search
+        modelAndView.addObject("buildingPage", buildingPage);
+        modelAndView.addObject("buildingSearch",  buildingSearchRequest); // luu du lieu sau khi tim kiem tren bang search
         modelAndView.addObject("listStaffs", userService.getStaffs());
         modelAndView.addObject("districts", District.type());
         modelAndView.addObject("typeCodes", TypeCode.type());
