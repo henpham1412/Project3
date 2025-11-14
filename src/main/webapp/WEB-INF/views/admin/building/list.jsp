@@ -271,30 +271,17 @@
                     </div><!-- /.span -->
                 </div>
                 <c:if test="${buildingPage.totalPages > 0}">
-                <ul class="pagination">
-                    <%-- Nút Lùi (Previous) --%>
-                    <c:choose>
-                        <c:when test="${buildingPage.first}">
-                            <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-                        </c:when>
-                        <c:otherwise>
-                            <c:url var="prevPageUrl" value="/admin/building-list">
-                                <c:param name="page" value="${buildingPage.number - 1}"/>
-                                <c:param name="size" value="${buildingPage.size}"/>
-                                <c:param name="tenQuanLi" value="${buildingSearch.managerName}"/>
-                                <c:param name="sdtQuanLi" value="${buildingSearch.managerPhone}"/>
-                                <c:param name="nhanVien" value="${buildingSearch.staffId}"/>
-                                <%-- Thêm các param filter khác nếu có --%>
-                            </c:url>
-                            <li class="page-item"><a class="page-link" href="${prevPageUrl}">Previous</a></li>
-                        </c:otherwise>
-                    </c:choose>
-
-                    <%-- Các nút số trang --%>
-                    <c:forEach var="i" begin="0" end="${buildingPage.totalPages - 1}">
-                        <c:url var="pageUrl" value="/admin/building-list">
-                            <c:param name="page" value="${i}"/>
+            <ul class="pagination">
+                <%-- Nút Lùi (Previous) --%>
+                <c:choose>
+                    <c:when test="${buildingPage.first}">
+                        <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                    </c:when>
+                    <c:otherwise>
+                        <c:url var="prevPageUrl" value="/admin/building-list">
+                            <c:param name="page" value="${buildingPage.number - 1}"/>
                             <c:param name="size" value="${buildingPage.size}"/>
+                            <%-- Thêm TẤT CẢ filter param vào đây --%>
                             <c:param name="name" value="${buildingSearch.name}"/>
                             <c:param name="floorArea" value="${buildingSearch.floorArea}"/>
                             <c:param name="district" value="${buildingSearch.district}"/>
@@ -310,52 +297,87 @@
                             <c:param name="managerName" value="${buildingSearch.managerName}"/>
                             <c:param name="managerPhone" value="${buildingSearch.managerPhone}"/>
                             <c:param name="staffId" value="${buildingSearch.staffId}"/>
-                            <c:param name="typeCode" value="${buildingSearch.typeCode}"/>
-                             <%-- Thêm các param filter khác nếu có --%>
+                            <%-- SỬA LẠI TYPECODE: Dùng vòng lặp --%>
+                            <c:forEach var="type" items="${buildingSearch.typeCode}">
+                                <c:param name="typeCode" value="${type}"/>
+                            </c:forEach>
                         </c:url>
+                        <li class="page-item"><a class="page-link" href="${prevPageUrl}">Previous</a></li>
+                    </c:otherwise>
+                </c:choose>
 
-                        <c:choose>
-                            <c:when test="${i == buildingPage.number}">
-                                <li class="page-item active"><a class="page-link" href="${pageUrl}">${i + 1}</a></li>
-                            </c:when>
-                            <c:otherwise>
-                                <li class="page-item"><a class="page-link" href="${pageUrl}">${i + 1}</a></li>
-                            </c:otherwise>
-                        </c:choose>
-                    </c:forEach>
+                <%-- Các nút số trang --%>
+                <c:forEach var="i" begin="0" end="${buildingPage.totalPages - 1}">
+                    <c:url var="pageUrl" value="/admin/building-list">
+                        <c:param name="page" value="${i}"/>
+                        <c:param name="size" value="${buildingPage.size}"/>
+                        <%-- Tất cả các filter param (giống hệt ở trên) --%>
+                        <c:param name="name" value="${buildingSearch.name}"/>
+                        <c:param name="floorArea" value="${buildingSearch.floorArea}"/>
+                        <c:param name="district" value="${buildingSearch.district}"/>
+                        <c:param name="ward" value="${buildingSearch.ward}"/>
+                        <c:param name="street" value="${buildingSearch.street}"/>
+                        <c:param name="numberOfBasement" value="${buildingSearch.numberOfBasement}"/>
+                        <c:param name="direction" value="${buildingSearch.direction}"/>
+                        <c:param name="level" value="${buildingSearch.level}"/>
+                        <c:param name="areaFrom" value="${buildingSearch.areaFrom}"/>
+                        <c:param name="areaTo" value="${buildingSearch.areaTo}"/>
+                        <c:param name="rentPriceFrom" value="${buildingSearch.rentPriceFrom}"/>
+                        <c:param name="rentPriceTo" value="${buildingSearch.rentPriceTo}"/>
+                        <c:param name="managerName" value="${buildingSearch.managerName}"/>
+                        <c:param name="managerPhone" value="${buildingSearch.managerPhone}"/>
+                        <c:param name="staffId" value="${buildingSearch.staffId}"/>
+                        <%-- SỬA LẠI TYPECODE: Dùng vòng lặp --%>
+                        <c:forEach var="type" items="${buildingSearch.typeCode}">
+                            <c:param name="typeCode" value="${type}"/>
+                        </c:forEach>
+                    </c:url>
 
-                    <%-- Nút Tới (Next) --%>
                     <c:choose>
-                        <c:when test="${buildingPage.last}">
-                            <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+                        <c:when test="${i == buildingPage.number}">
+                            <li class="page-item active"><a class="page-link" href="${pageUrl}">${i + 1}</a></li>
                         </c:when>
                         <c:otherwise>
-                            <c:url var="nextPageUrl" value="/admin/building-list">
-                                <c:param name="page" value="${buildingPage.number + 1}"/>
-                                <c:param name="size" value="${buildingPage.size}"/>
-                                <c:param name="name" value="${buildingSearch.name}"/>
-                                <c:param name="floorArea" value="${buildingSearch.floorArea}"/>
-                                <c:param name="district" value="${buildingSearch.district}"/>
-                                <c:param name="ward" value="${buildingSearch.ward}"/>
-                                <c:param name="street" value="${buildingSearch.street}"/>
-                                <c:param name="numberOfBasement" value="${buildingSearch.numberOfBasement}"/>
-                                <c:param name="direction" value="${buildingSearch.direction}"/>
-                                <c:param name="level" value="${buildingSearch.level}"/>
-                                <c:param name="areaFrom" value="${buildingSearch.areaFrom}"/>
-                                <c:param name="areaTo" value="${buildingSearch.areaTo}"/>
-                                <c:param name="rentPriceFrom" value="${buildingSearch.rentPriceFrom}"/>
-                                <c:param name="rentPriceTo" value="${buildingSearch.rentPriceTo}"/>
-                                <c:param name="managerName" value="${buildingSearch.managerName}"/>
-                                <c:param name="managerPhone" value="${buildingSearch.managerPhone}"/>
-                                <c:param name="staffId" value="${buildingSearch.staffId}"/>
-                                <c:param name="typeCode" value="${buildingSearch.typeCode}"/>
-                                 <%-- Thêm các param filter khác nếu có --%>
-                            </c:url>
-                            <li class="page-item"><a class="page-link" href="${nextPageUrl}">Next</a></li>
+                            <li class="page-item"><a class="page-link" href="${pageUrl}">${i + 1}</a></li>
                         </c:otherwise>
                     </c:choose>
-                </ul>
-            </c:if>
+                </c:forEach>
+
+                <%-- Nút Tới (Next) --%>
+                <c:choose>
+                    <c:when test="${buildingPage.last}">
+                        <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+                    </c:when>
+                    <c:otherwise>
+                        <c:url var="nextPageUrl" value="/admin/building-list">
+                            <c:param name="page" value="${buildingPage.number + 1}"/>
+                            <c:param name="size" value="${buildingPage.size}"/>
+                            <%-- Tất cả các filter param (giống hệt ở trên) --%>
+                            <c:param name="name" value="${buildingSearch.name}"/>
+                            <c:param name="floorArea" value="${buildingSearch.floorArea}"/>
+                            <c:param name="district" value="${buildingSearch.district}"/>
+                            <c:param name="ward" value="${buildingSearch.ward}"/>
+                            <c:param name="street" value="${buildingSearch.street}"/>
+                            <c:param name="numberOfBasement" value="${buildingSearch.numberOfBasement}"/>
+                            <c:param name="direction" value="${buildingSearch.direction}"/>
+                            <c:param name="level" value="${buildingSearch.level}"/>
+                            <c:param name="areaFrom" value="${buildingSearch.areaFrom}"/>
+                            <c:param name="areaTo" value="${buildingSearch.areaTo}"/>
+                            <c:param name="rentPriceFrom" value="${buildingSearch.rentPriceFrom}"/>
+                            <c:param name="rentPriceTo" value="${buildingSearch.rentPriceTo}"/>
+                            <c:param name="managerName" value="${buildingSearch.managerName}"/>
+                            <c:param name="managerPhone" value="${buildingSearch.managerPhone}"/>
+                            <c:param name="staffId" value="${buildingSearch.staffId}"/>
+                            <%-- SỬA LẠI TYPECODE: Dùng vòng lặp --%>
+                            <c:forEach var="type" items="${buildingSearch.typeCode}">
+                                <c:param name="typeCode" value="${type}"/>
+                            </c:forEach>
+                        </c:url>
+                        <li class="page-item"><a class="page-link" href="${nextPageUrl}">Next</a></li>
+                    </c:otherwise>
+                </c:choose>
+            </ul>
+        </c:if>
 
             </div><!-- /.page-content -->
         </div>
@@ -466,10 +488,11 @@
             dataType: "JSON",
             success: function(response) {
                 console.info("success");
+                window.location.href = "/admin/building-list?status=success";
             },
             error: function(response) {
                 console.log("failed");
-                window.location.href = buildingListUrl + "?message=error";
+                window.location.href = "/admin/building-list?message=error";
                 console.log(response);
             }
         });
@@ -496,15 +519,18 @@
         $.ajax({
             type: "Delete",
             url: "${buildingAPI}/" + data,
-            data: JSON.stringify(data),
-            contentType:"application/json",
-            dataType: "JSON",
+            // data: JSON.stringify(data),
+            // contentType:"application/json",
+            //dataType: "JSON",
+            dataType: "text",
             success: function(respond) {
                 console.log("success");
+                window.location.href = "/admin/building-list?status=success";
             },
             error: function(respond) {
                 console.log("failed");
                 console.log(respond);
+                window.location.href = "/admin/building-list?message=error";
             }
         });
     }

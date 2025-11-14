@@ -32,7 +32,7 @@ public class BuildingController {
     private UserService userService;
     @RequestMapping(value="/admin/building-list", method = RequestMethod.GET)
     public ModelAndView buildingList(@ModelAttribute("buildingSearch") BuildingSearchRequest buildingSearchRequest,
-                                     HttpServletRequest request, @PageableDefault(page = 0, size = 5) Pageable pageable) {
+                                     HttpServletRequest request, @PageableDefault(page = 0, size = 3) Pageable pageable) {
         ModelAndView modelAndView = new ModelAndView("admin/building/list");
         // xử lí dữ liệu dưới DB
         Page<BuildingSearchResponse> buildingPage = buildingService.listBuildings(buildingSearchRequest, pageable);

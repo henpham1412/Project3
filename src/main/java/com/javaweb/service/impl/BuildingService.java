@@ -45,10 +45,11 @@ public class BuildingService implements IBuildingService {
     private BuildingConverter buildingConverter;
 
     @Autowired
-    private RentAreaRepository rentAreaRepository;
+    private AssignmentBuildingService  assignmentBuildingService;
 
     @Autowired
-    private AssignmentBuildingRepository assignmentBuildingRepository;
+    private RentAreaService rentAreaService;
+
 
     public static final String UPLOAD_DIRECTORY = "D:/spring/Project-spring-boot-web/images";
 
@@ -94,53 +95,51 @@ public class BuildingService implements IBuildingService {
     public void addBuilding(BuildingDTO buildingDTO) {
         BuildingEntity buildingEntity = buildingConverter.convertDTOToEntity(buildingDTO);
 
-        String base64Image = buildingDTO.getImageBase64();
-        if (StringUtils.check(base64Image)) {
-            try {
-                // Gọi hàm helper để lưu ảnh và lấy đường dẫn
-                String imagePath = saveImage(base64Image);
+        String oldAvatarPath = null; // Biến để lưu đường dẫn ảnh cũ
 
-                // 3. Gán đường dẫn vào Entity
-                buildingEntity.setAvatar(imagePath);
-            } catch (IOException e) {
-                // Xử lý lỗi nếu không lưu được ảnh
-                e.printStackTrace();
-                // Bạn có thể ném ra một lỗi ở đây để transaction rollback
-                throw new RuntimeException("Không thể lưu ảnh!");
+        // --- 1. KIỂM TRA CẬP NHẬT VÀ LẤY ẢNH CŨ ---
+        // Nếu đây là CẬP NHẬT (có ID), ta phải giữ lại ảnh CŨ
+        if (buildingDTO.getId() != null) {
+            // Tải entity cũ LÊN BIẾN MỚI
+            // (Lưu ý: nên dùng orElse(null) thay vì .get() để tránh lỗi)
+            BuildingEntity oldBuilding = buildingRepository.findById(buildingDTO.getId()).orElse(null);
+            if (oldBuilding != null) {
+                oldAvatarPath = oldBuilding.getAvatar(); // Lấy đường dẫn ảnh cũ
             }
         }
 
-        if (buildingDTO.getId() != null) {
-            // Đây là CẬP NHẬT
-            // 1. Tìm tất cả RentArea cũ
-            List<RentAreaEntity> oldRentAreas = rentAreaRepository.findAllByBuildingList_Id(buildingDTO.getId());
+        // --- 2. XỬ LÝ ẢNH MỚI (NẾU CÓ) ---
+        String base64Image = buildingDTO.getImageBase64();
 
-            // 2. Xóa tất cả RentArea cũ
-            rentAreaRepository.deleteAll(oldRentAreas);
+        if (StringUtils.check(base64Image)) { // CÓ ẢNH MỚI
+            try {
+                // A. Xóa ảnh cũ (nếu có)
+                if (StringUtils.check(oldAvatarPath)) {
+                    deleteImage(oldAvatarPath);
+                }
+
+                // B. Lưu ảnh MỚI và lấy đường dẫn mới
+                String newImagePath = saveImage(base64Image);
+                buildingEntity.setAvatar(newImagePath);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new RuntimeException("Không thể lưu ảnh!");
+            }
+        } else { // KHÔNG CÓ ẢNH MỚI
+            // Gán avatar cũ (đã lấy ở bước 1) vào entity sắp save
+            buildingEntity.setAvatar(oldAvatarPath);
         }
 
         buildingRepository.save(buildingEntity);
-        String rentAreaStr = buildingDTO.getRentArea();
-        if (StringUtils.check(rentAreaStr)) {
-            List<RentAreaEntity> rentAreaEntities = new ArrayList<>();
-            String[] areas = rentAreaStr.split(",");
-            for (String areaValue : areas) {
-                RentAreaEntity rentAreaEntity = new RentAreaEntity();
-                rentAreaEntity.setValue(Long.parseLong(areaValue.trim()));
-                rentAreaEntity.setBuildingList(buildingEntity);
-                rentAreaEntities.add(rentAreaEntity);
-            }
-            rentAreaRepository.saveAll(rentAreaEntities);
-        }
+        rentAreaService.addRentArea(buildingDTO, buildingEntity);
     }
 
     private String saveImage(String base64Image) throws IOException {
-        // ... (Code tách chuỗi và lấy extension) ...
         String[] parts = base64Image.split(",");
-        String imageHeader = parts[0]; // "data:image/jpeg;base64"
-        String imageData = parts[1]; // "iVBORw0KGgoAAAANSUhEUg..."
+        String imageHeader = parts[0];
+        String imageData = parts[1];
 
-        // Lấy định dạng file (ví dụ: "jpeg")
         String extension;
         if (imageHeader.contains("image/jpeg")) {
             extension = "jpg";
@@ -149,26 +148,40 @@ public class BuildingService implements IBuildingService {
         } else {
             extension = "jpg"; // Mặc định
         }
-        // Decode Base64
+
         byte[] imageBytes = Base64.getDecoder().decode(imageData);
-
-        // Tạo tên file duy nhất
         String fileName = "building-" + System.nanoTime() + "." + extension;
-
-        // Tạo đường dẫn đầy đủ
         Path imagePath = Paths.get(UPLOAD_DIRECTORY, fileName);
-
-        // Viết file vào ổ đĩa
         Files.write(imagePath, imageBytes);
 
-        // Trả về đường dẫn TƯƠNG ĐỐI (để lưu vào CSDL)
-        // SỬA LẠI ĐÂY (bỏ /building)
-        return "/images/" + fileName;
+        return "/images/" + fileName; // Trả về đường dẫn web
+    }
+
+    // --- HÀM HELPER MỚI ĐỂ XÓA ẢNH ---
+    private void deleteImage(String relativeImagePath) {
+        if (!StringUtils.check(relativeImagePath)) {
+            return;
+        }
+        try {
+            // relativeImagePath là "/images/ten_file.jpg"
+            // Lấy tên file
+            String fileName = relativeImagePath.substring(relativeImagePath.lastIndexOf("/") + 1);
+
+            // Tạo đường dẫn vật lý đầy đủ
+            Path physicalPath = Paths.get(UPLOAD_DIRECTORY, fileName);
+
+            // Xóa file nếu nó tồn tại
+            Files.deleteIfExists(physicalPath);
+        } catch (IOException e) {
+            e.printStackTrace(); // Ghi log lỗi, nhưng không dừng chương trình
+        }
     }
 
     @Transactional
     @Override
     public void deleteBuilding(List<Long> ids) {
+        assignmentBuildingService.deleteAssignmentBuilding(ids);
+        rentAreaService.deleteRentArea(ids);
         buildingRepository.deleteByIdIn(ids);
     }
 
@@ -182,21 +195,7 @@ public class BuildingService implements IBuildingService {
     @Transactional
     @Override
     public void assignBuilding(AssignmentBuildingDTO assignmentBuildingDTO) {
-        List<AssignmentBuildingEntity> assignmentBuildingEntities = assignmentBuildingRepository.findAllByBuildingEntity_Id(assignmentBuildingDTO.getBuildingId());
-        assignmentBuildingRepository.deleteAll(assignmentBuildingEntities);
-        List<AssignmentBuildingEntity> assignBuildingEntities = new ArrayList<>();
         BuildingEntity buildingEntity = buildingRepository.findById(assignmentBuildingDTO.getBuildingId()).get();
-        List<UserEntity> userEntities = new ArrayList<>();
-        List<Long> staffIds = assignmentBuildingDTO.getStaffs();
-        for (Long staffId : staffIds) {
-            userEntities.add(userRepository.findById(staffId).get());
-        }
-        for (UserEntity userEntity : userEntities) {
-            AssignmentBuildingEntity assignmentBuildingEntity = new AssignmentBuildingEntity();
-            assignmentBuildingEntity.setBuildingEntity(buildingEntity);
-            assignmentBuildingEntity.setUserEntity(userEntity);
-            assignBuildingEntities.add(assignmentBuildingEntity);
-        }
-        assignmentBuildingRepository.saveAll(assignBuildingEntities);
+        assignmentBuildingService.addAssignmentBuilding(assignmentBuildingDTO, buildingEntity);
     }
 }

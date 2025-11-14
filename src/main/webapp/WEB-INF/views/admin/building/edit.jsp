@@ -380,13 +380,17 @@
             url: "${buildingAPI}",
             data: JSON.stringify(data),
             contentType:"application/json",
-            dataType: "JSON",
+            // dataType: "JSON",
             success: function(respond) {
                 console.log("success");
+                // them status
+                window.location.href = "<c:url value="/admin/building-edit?status=success"/>";
             },
             error: function(respond) {
                 console.log("failed");
                 console.log(respond);
+                // them status
+                window.location.href = "<c:url value="/admin/building-edit?status=failed"/>";
             }
             });
     };
