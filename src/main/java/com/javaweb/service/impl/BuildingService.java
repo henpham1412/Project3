@@ -126,9 +126,9 @@ public class BuildingService implements IBuildingService {
             // Gán avatar cũ (đã lấy ở bước 1) vào entity sắp save
             buildingEntity.setAvatar(oldAvatarPath);
         }
-
+        List<RentAreaEntity> listRentAreas = rentAreaService.getListRentArea(buildingDTO, buildingEntity);
+        buildingEntity.setRentAreaEntities(listRentAreas);
         buildingRepository.save(buildingEntity);
-        rentAreaService.addRentArea(buildingDTO, buildingEntity);
     }
 
     private String saveImage(String base64Image) throws IOException {
@@ -192,7 +192,10 @@ public class BuildingService implements IBuildingService {
     public void assignBuilding(AssignmentBuildingDTO assignmentBuildingDTO) {
         BuildingEntity buildingEntity = buildingRepository.findById(assignmentBuildingDTO.getBuildingId()).get();
         List<UserEntity> listStaffs = userRepository.findAllById(assignmentBuildingDTO.getStaffs());
-        buildingEntity.setUserEntities((listStaffs));
+        //buildingEntity.setUserEntities((listStaffs));
+        //safe
+        buildingEntity.getUserEntities().clear();
+        buildingEntity.getUserEntities().addAll(listStaffs);
         buildingRepository.save(buildingEntity);
     }
 }

@@ -1,22 +1,19 @@
 <%--
   Created by IntelliJ IDEA.
   User: HP
-  Date: 30/09/2025
-  Time: 11:32
+  Date: 30/11/2025
+  Time: 16:04
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" %>
 <%@include file="/common/taglib.jsp" %>
-<c:url var="buildingListURL" value="/admin/building-list"/>
-<c:url var="buildingAPI" value="/api/building"/>
 <script>
-    var buildingListUrl = "${pageContext.request.contextPath}/admin/building-list";
+    var customerListUrl = "${pageContext.request.contextPath}/admin/customer-list";
 </script>
-
 <html>
 <head>
-    <title>Danh sách tòa nhà</title>
+    <title>Danh sách Khách hàng</title>
 </head>
 <body>
 <div class="main-content">
@@ -31,7 +28,7 @@
                         <i class="ace-icon fa fa-home home-icon"></i>
                         <a href="#">Trang chủ</a>
                     </li>
-                    <li class="active">Quản lý tòa nhà</li>
+                    <li class="active">Quản lý khách hàng</li>
                 </ul><!-- /.breadcrumb -->
 
             </div>
@@ -66,105 +63,40 @@
 
                             <div class="widget-body" style="font-family: 'Times New Roman', Times, serif;">
                                 <div class="widget-main">
-                                    <form:form id="listForm" modelAttribute="buildingSearch" action="${buildingListURL}" method="GET">
+                                    <form:form id="listForm" modelAttribute="customerSearch" action="${customerListURL}" method="GET">
                                          <div class = "row">
                                         <div class="from-group">
                                             <div class="col-xs-12">
-                                                <div class="col-xs-6">
-                                                    <label class="name">Tên tòa nhà</label>
-<%--                                                    <input type="text" class="form-control" name="name" value="${buildingSearch.name}">--%>
-                                                        <form:input path="name" class="form-control" />
-                                                </div>
-                                                <div class="col-xs-6">
-                                                    <label class="name">Diện tích sàn</label>
-<%--                                                    <input type="number" class="form-control" name="floorArea" value="${buildingSearch.floorArea}">--%>
-                                                        <form:input path="floorArea" class="form-control" />
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12">
-                                                <div class="col-xs-2">
-                                                    <label class="name">Quận</label>
-                                                    <form:select class="form-control" path="district">
-                                                        <form:option value="">---Chọn Quận---</form:option>
-                                                        <form:options items="${districts}"></form:options>
-                                                    </form:select>
-                                                </div>
-                                                <div class="col-xs-5">
-                                                    <label class="name">Phường</label>
-                                                    <form:input path="ward" class="form-control" />
-<%--                                                    <input type="text" class="form-control" name="ward" value="${buildingSearch.ward}">--%>
-                                                </div>
-                                                <div class="col-xs-5">
-                                                    <label class="name">Đường</label>
-                                                    <form:input path="street" class="form-control" />
-<%--                                                    <input type="text" class="form-control" name="street" value="${buildingSearch.street}">--%>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12">
                                                 <div class="col-xs-4">
-                                                    <label class="name">Số tầng hầm</label>
-                                                    <form:input path="numberOfBasement" class="form-control" />
-<%--                                                    <input type="text" class="form-control" name="numberOfBasement" value="${buildingSearch.numberOfBasement}">--%>
+                                                    <label class="name">Tên khách hàng</label>
+                                                    <form:input path="name" class="form-control"/>
                                                 </div>
                                                 <div class="col-xs-4">
-                                                    <label class="name">Hướng</label>
-                                                    <form:input path="direction" class="form-control" />
-<%--                                                    <input type="text" class="form-control" name="direction" value="${buildingSearch.direction}">--%>
+                                                    <label class="name">Số điện thoại</label>
+                                                    <form:input path="phoneNumber" class="form-control" />
                                                 </div>
-                                                <div class="col-xs-4">
-                                                    <label class="name">Hạng</label>
-                                                    <form:input path="level" class="form-control" />
-<%--                                                    <input type="number" class="form-control" name="level" value="${buildingSearch.level}">--%>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12">
-                                                <div class="col-xs-3">
-                                                    <label class="name">Diện tích từ</label>
-                                                    <form:input path="areaFrom" class="form-control" />
-<%--                                                    <input type="number" class="form-control" name="areaFrom" value="">--%>
-                                                </div>
-                                                <div class="col-xs-3">
-                                                    <label class="name">Diện tích đến</label>
-                                                    <form:input path="areaTo" class="form-control" />
-<%--                                                    <input type="number" class="form-control" name="areaTo" value="">--%>
-                                                </div>
-                                                <div class="col-xs-3">
-                                                    <label class="name">Giá thuê từ</label>
-                                                    <form:input path="rentPriceFrom" class="form-control" />
-<%--                                                    <input type="number" class="form-control" name="rentPriceFrom" value="">--%>
-                                                </div>
-                                                <div class="col-xs-3">
-                                                    <label class="name">Giá thuê đến</label>
-                                                    <form:input path="rentPriceTo" class="form-control" />
-<%--                                                    <input type="number" class="form-control" name="rentPriceTo" value="">--%>
-                                                </div>
-                                            </div>
-                                            <div class="col-xs-12">
 
-                                                <div class="col-xs-5">
-                                                    <label class="name">Tên quản lí</label>
-                                                    <form:input path="managerName" class="form-control" />
-<%--                                                    <input type="text" class="form-control" name="managerName" value="">--%>
+                                                <div class="col-xs-4">
+                                                    <label class="name">Email</label>
+                                                <form:input path="email" class="form-control"/>
+
                                                 </div>
-                                                <div class="col-xs-5">
-                                                    <label class="name">SĐT quản lí</label>
-                                                    <form:input path="managerPhone" class="form-control" />
-<%--                                                    <input type="text" class="form-control" name="managerPhoneNumber" value="">--%>
-                                                </div>
-                                                <div class="col-xs-2">
+                                            </div>
+                                            <div class="col-xs-12">
+                                                <div class="col-xs-3">
                                                 <security:authorize access="hasRole('MANAGER')">
-
                                                     <label class="name">Nhân viên</label>
                                                     <form:select class="form-control" path="staffId">
                                                         <form:option value="">---Chọn nhân viên---</form:option>
                                                         <form:options items="${listStaffs}"/>
                                                     </form:select>
                                                     </security:authorize>
+
                                                 </div>
                                             </div>
                                             <div class="col-xs-12">
                                                 <div class="col-xs-6">
-                                                    <form:checkboxes items="${typeCodes}" path="typeCode"/>
+
                                                 </div>
                                             </div>
                                             <div class="col-xs-12">
@@ -445,107 +377,9 @@
 		  </div>
 
 <script>
-    function assignmentBuilding(buildingId) {
-        $('#assignmentBuildingModal').modal();
-        loadStaff(buildingId);
-        $('#buildingId').val(buildingId);
-    }
 
-    function loadStaff(buildingId) {
-        $.ajax({
-            url: "/api/building/" + buildingId + '/staffs',
-            type: "GET",
-            // data: JSON.stringify(data),
-            // contentType:"application/json",
-            dataType: "JSON",
-            success: function(response) {
-                var row = '';
-                $.each(response.data, function (index, item){
-                    row += '<tr>';
-                    row += '<td class="text-center"><input type="checkbox" value= ' + item.staffId + ' id="checkbox_' + item.staffId + '" class = "check-box-element" ' +  item.checked + '/></td>';
-                    row += '<td class="text-center">' + item.fullName + '</td>';
-                    row += '</tr>';
-                });
-                $('#stafflist tbody').html(row);
-                console.info("success");
-            },
-            error: function(response) {
-                console.log("failed");
-                window.location.href = "<c:url value="/admin/building-list?message=error"/>";
-                console.log(response);
-            }
-        });
-    }
-
-    $('#btnassignmentBuilding').click(function(e){
-        e.preventDefault();
-        var data = {};
-        data['buildingId'] = $('#buildingId').val();
-        var staffs = $('#stafflist').find('tbody input[type = checkbox]:checked').map(function(){
-            return $(this).val();
-        }).get();
-        data['staffs'] = staffs;
-        if (data['staffs'] != '') {
-            assign(data);
-        }
-        console.log("OK");
-    });
-    function assign(data) {
-        $.ajax({
-            url: "/api/building/" + 'assignment',
-            type: "POST",
-            data: JSON.stringify(data),
-            contentType:"application/json",
-            dataType: "JSON",
-            success: function(response) {
-                console.info("success");
-                window.location.href = "/admin/building-list?status=success";
-            },
-            error: function(response) {
-                console.log("failed");
-                window.location.href = "/admin/building-list?message=error";
-                console.log(response);
-            }
-        });
-    }
-    $('#btnSearchBuilding').click(function (e){
-        e.preventDefault();
-        $('#listForm').submit();
-    });
-
-    function deleteBuilding(id) {
-        var buildingId = [id];
-        deleteBuildings(buildingId);
-    }
-
-    $('#btnDeleteBuilding').click(function(e){
-        e.preventDefault();
-        var buildingIds = $('#tableList').find('tbody input[type = checkbox]:checked').map(function(){
-            return $(this).val();
-        }).get();
-        console.log("Các ID được chọn:", buildingIds);
-        deleteBuildings(buildingIds);
-    });
-    function deleteBuildings(data) {
-        $.ajax({
-            type: "Delete",
-            url: "${buildingAPI}/" + data,
-            // data: JSON.stringify(data),
-            // contentType:"application/json",
-            //dataType: "JSON",
-            dataType: "text",
-            success: function(respond) {
-                console.log("success");
-                window.location.href = "/admin/building-list?status=success";
-            },
-            error: function(respond) {
-                console.log("failed");
-                console.log(respond);
-                window.location.href = "/admin/building-list?message=error";
-            }
-        });
-    }
 </script>
 
 </body>
 </html>
+

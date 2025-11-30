@@ -7,6 +7,7 @@ import com.javaweb.enums.TypeCode;
 import com.javaweb.model.dto.BuildingDTO;
 import com.javaweb.model.request.BuildingSearchRequest;
 import com.javaweb.model.response.BuildingSearchResponse;
+import com.javaweb.security.utils.SecurityUtils;
 import com.javaweb.service.impl.BuildingService;
 import com.javaweb.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +36,23 @@ public class BuildingController {
                                      HttpServletRequest request, @PageableDefault(page = 0, size = 3) Pageable pageable) {
         ModelAndView modelAndView = new ModelAndView("admin/building/list");
         // xử lí dữ liệu dưới DB
-        Page<BuildingSearchResponse> buildingPage = buildingService.listBuildings(buildingSearchRequest, pageable);
+        //Page<BuildingSearchResponse> buildingPage = buildingService.listBuildings(buildingSearchRequest, pageable);
 
-        modelAndView.addObject("buildingPage", buildingPage);
+
         modelAndView.addObject("buildingSearch",  buildingSearchRequest); // luu du lieu sau khi tim kiem tren bang search
         modelAndView.addObject("listStaffs", userService.getStaffs());
         modelAndView.addObject("districts", District.type());
         modelAndView.addObject("typeCodes", TypeCode.type());
+
+        if (SecurityUtils.getAuthorities().contains("ROLE_STAFF")) {
+            Long staffId = SecurityUtils.getPrincipal().getId();
+            buildingSearchRequest.setStaffId(staffId);
+            modelAndView.addObject("buildingPage", buildingService.listBuildings(buildingSearchRequest, pageable));
+        } else {
+            modelAndView.addObject("buildingPage", buildingService.listBuildings(buildingSearchRequest, pageable));
+        }
+        //modelAndView.addObject("buildingPage", buildingPage);
+
         return modelAndView;
     }
 

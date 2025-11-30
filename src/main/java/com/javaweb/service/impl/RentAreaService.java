@@ -21,15 +21,7 @@ public class RentAreaService implements IRentAreaService {
 
 
     @Override
-    public void addRentArea(BuildingDTO buildingDTO, BuildingEntity buildingEntity) {
-        if (buildingDTO.getId() != null) {
-            // Đây là CẬP NHẬT
-            // 1. Tìm tất cả RentArea cũ
-            List<RentAreaEntity> oldRentAreas = rentAreaRepository.findAllByBuildingList_Id(buildingDTO.getId());
-
-            // 2. Xóa tất cả RentArea cũ
-            rentAreaRepository.deleteAll(oldRentAreas);
-        }
+    public List<RentAreaEntity> getListRentArea(BuildingDTO buildingDTO, BuildingEntity buildingEntity) {
         String rentAreaStr = buildingDTO.getRentArea();
         if (StringUtils.check(rentAreaStr)) {
             List<RentAreaEntity> rentAreaEntities = new ArrayList<>();
@@ -37,11 +29,12 @@ public class RentAreaService implements IRentAreaService {
             for (String areaValue : areas) {
                 RentAreaEntity rentAreaEntity = new RentAreaEntity();
                 rentAreaEntity.setValue(Long.parseLong(areaValue.trim()));
-                rentAreaEntity.setBuildingList(buildingEntity);
                 rentAreaEntities.add(rentAreaEntity);
+                rentAreaEntity.setBuildingList(buildingEntity);
             }
-            rentAreaRepository.saveAll(rentAreaEntities);
+            return rentAreaEntities;
         }
+        return new ArrayList<>();
     }
 
     @Override

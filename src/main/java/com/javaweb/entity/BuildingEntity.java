@@ -94,7 +94,8 @@ public class BuildingEntity extends BaseEntity{
     @Column(name = "managerphone")
     private String managerPhone;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "buildingList")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "buildingList",
+                cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},  orphanRemoval = true)
     List<RentAreaEntity> rentAreaEntities = new ArrayList<>();
 
     @ManyToMany(fetch =  FetchType.LAZY)
