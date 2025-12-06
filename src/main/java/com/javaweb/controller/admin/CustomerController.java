@@ -1,5 +1,6 @@
 package com.javaweb.controller.admin;
 
+import com.javaweb.model.dto.CustomerDTO;
 import com.javaweb.model.request.CustomerSearchRequest;
 import com.javaweb.security.utils.SecurityUtils;
 import com.javaweb.service.impl.CustomerService;
@@ -41,4 +42,11 @@ public class CustomerController {
         return modelAndView;
     }
 
+
+    @RequestMapping(value = "/admin/customer-edit", method = RequestMethod.GET)
+    public ModelAndView customerEdit(@ModelAttribute CustomerDTO customerDTO, HttpServletRequest request) {
+        ModelAndView modelAndView = new ModelAndView("admin/customer/edit");
+        modelAndView.addObject("customerEdit", customerDTO);
+        return modelAndView;
+    }
 }

@@ -1,6 +1,8 @@
 package com.javaweb.entity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="customer")
@@ -26,6 +28,20 @@ public class CustomerEntity extends BaseEntity{
 
     @Column(name="status")
     private String status;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name="assignmentcustomer",
+            joinColumns = @JoinColumn(name="customerid", nullable = false),
+            inverseJoinColumns = @JoinColumn(name="staffid", nullable = false))
+    private List<UserEntity> userEntities = new ArrayList<>();
+
+    public List<UserEntity> getUserEntities() {
+        return userEntities;
+    }
+
+    public void setUserEntities(List<UserEntity> userEntities) {
+        this.userEntities = userEntities;
+    }
 
     public String getPhone() {
         return phone;

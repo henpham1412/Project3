@@ -42,7 +42,7 @@ public class CustomerRepositoryImpl implements CustomerRepositoryCustom {
     public Page<CustomerEntity> getCustomerEntities(CustomerSearchRequest customerSearchRequest, Pageable pageable) {
         StringBuilder queryBuilder = new StringBuilder(" SELECT c.* from customer c ");
         StringBuilder whereClause = new StringBuilder(" WHERE 1 = 1 ");
-        appendLikeCondition(customerSearchRequest.getName(), "c.name", whereClause);
+        appendLikeCondition(customerSearchRequest.getName(), "c.fullname", whereClause);
         appendStringEqualCondition(customerSearchRequest.getPhoneNumber(), "c.phone", whereClause);
         appendStringEqualCondition(customerSearchRequest.getEmail(), "c.email", whereClause);
 

@@ -102,7 +102,7 @@
                                             <div class="col-xs-12">
                                                 <div class="col-xs-6">
                                                     <!-- <button class="btn btn-danger">Tìm kiếm</button> -->
-                                                    <button type="button" class="btn btn-danger" id="btnSearchBuilding">
+                                                    <button type="button" class="btn btn-danger" id="btnSearchCustomer">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                                                             <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"></path>
                                                         </svg>
@@ -117,7 +117,7 @@
                             </div>
                             <div class="pull-right">
                             <security:authorize access="hasRole('MANAGER')">
-                                <a href="/admin/building-edit">
+                                <a href="/admin/customer-edit">
 
                                     <button class="btn btn-info" title="Thêm tòa nhà">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-building-add" viewBox="0 0 16 16">
@@ -185,7 +185,7 @@
                                 <td>
                                     <div class="hidden-sm hidden-xs btn-group">
                                     <security:authorize access="hasRole('MANAGER')">
-                                        <button class="btn btn-xs btn-success" title="Giao tòa nhà" onclick="assignmentBuilding(${item.id})">
+                                        <button class="btn btn-xs btn-success" title="Giao tòa nhà" onclick="assignmentCustomer(${item.id})">
                                             <i class="ace-icon glyphicon glyphicon-list"></i>
                                         </button>
                                     </security:authorize>
@@ -276,7 +276,7 @@
         </div>
 </div><!-- /.main-container -->
 
-<div class="modal fade" id="assignmentBuildingModal" role="dialog" style="font-family: 'Times New Roman', Times, serif;">
+<div class="modal fade" id="assignmentCustomerModal" role="dialog" style="font-family: 'Times New Roman', Times, serif;">
 			<div class="modal-dialog">
 
 			  <!-- Modal content-->
@@ -315,10 +315,10 @@
 <%--							</tr>--%>
 						</tbody>
 					</table>
-					<input type="hidden" id="buildingId" name="buildingId" value="">
+					<input type="hidden" id="customerId" name="customerId" value="">
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" id="btnassignmentBuilding">Giao tòa nhà</button>
+					<button type="button" class="btn btn-default" id="btnassignmentCustomer">Giao tòa nhà</button>
 				  <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
 				</div>
 			  </div>
@@ -327,6 +327,42 @@
 		  </div>
 
 <script>
+    $('#btnSearchCustomer').click(function (e){
+        e.preventDefault();
+        $('#listForm').submit();
+    });
+
+    function assignmentCustomer(customerId) {
+      $('#assignmentCustomerModal').modal();
+      loadStaff(customerId);
+      $('#customerId').val(customerId);
+    };
+
+    function loadStaff(customerId) {
+        $.ajax({
+            url: "/api/customer/" + customerId + '/staffs',
+            type: "GET",
+            dataType: "JSON",
+            success: function(response) {
+                var row = '';
+                $.each(response.data, function (index, item){
+                    row += '<tr>';
+                    row += '<td class="text-center"><input type="checkbox" value= ' + item.staffId + ' id="checkbox_' + item.staffId + '" class = "check-box-element" ' +  item.checked + '/></td>';
+                    row += '<td class="text-center">' + item.fullName + '</td>';
+                    row += '</tr>';
+                });
+                $('#stafflist tbody').html(row);
+                console.info("success");
+            },
+            error: function(response) {
+                console.log("failed");
+                window.location.href = "<c:url value="/admin/customer-list?message=error"/>";
+                console.log(response);
+            }
+        });
+    }
+
+
 
 </script>
 
